@@ -22,10 +22,12 @@ fun Char.toGender() =
 
 data class User(val id: Long, val age: Int, val gender: Gender, val occupationId: Long, val zipCode: String)
 
-data class Genres(val id: Long, val name: String)
+data class Genre(val id: Int, val name: String)
 
 data class Movie(val id: Long, val name: String, val dateOfPublish: Date)
 
 data class Occupation(val id: Long, val name: String)
 
-data class Rating(val id: Long, val userId: Long, val movieId: Long, val rating: Byte, val ratedAt: Date)
+data class Rating(val id: Long, val userId: Long, val movieId: Long, val rating: Byte, val ratedAt: Date){
+    constructor(userId: Long, movieId: Long, rating: Byte, ratedAt: Date) : this(0,userId,movieId,rating,ratedAt)
+}

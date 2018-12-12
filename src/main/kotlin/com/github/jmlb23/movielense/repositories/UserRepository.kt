@@ -14,14 +14,14 @@ object UserRepository : Repository<User>{
 
     }.asSequence()
 
-    override fun add(element: User): Boolean =
+    override fun add(element: User): Long =
             transactionEnviroment { Users.insert {
-                it[age]= element.age.toInt()
+                it[age]= element.age
                 it[gender] = element.gender.let { it.toString().first() }
                 it[occupationId] = element.occupationId.toInt()
                 it[zipCode] = element.zipCode
-            }.generatedKey!!
-        }.toInt() > 0
+            }.generatedKey!!.toLong()
+        }
 
 
     override fun getAll(): Sequence<User> =
