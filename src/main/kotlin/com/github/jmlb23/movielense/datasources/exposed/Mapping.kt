@@ -1,8 +1,6 @@
 package com.github.jmlb23.movielense.datasources.exposed
 
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Query
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 
