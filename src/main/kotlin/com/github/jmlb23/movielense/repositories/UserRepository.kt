@@ -7,17 +7,17 @@ import com.github.jmlb23.movielense.domain.toGender
 import org.jetbrains.exposed.sql.*
 
 object UserRepository : Repository<User>{
-
+    private fun ResultRow.toUser() = User(this[Users.id].toLong(),this[Users.age],this[Users.gender].toGender(),this[Users.occupationId].toLong(),this[Users.zipCode].toString())
 
     override fun filter(predicate: SqlExpressionBuilder.() -> Op<Boolean>): Sequence<User> = transactionEnviroment {
-        Users.select(predicate).map{ User(it[Users.id].toLong(),it[Users.age],it[Users.gender].toGender(),it[Users.occupationId].toLong(),it[Users.zipCode].toString())}
+        Users.select(predicate).map{ it.toUser() }
 
     }.asSequence()
 
     override fun add(element: User): Long =
             transactionEnviroment { Users.insert {
                 it[age]= element.age
-                it[gender] = element.gender.let { it.toString().first() }
+                it[gender] = element.gender.toString().first()
                 it[occupationId] = element.occupationId.toInt()
                 it[zipCode] = element.zipCode
             }.generatedKey!!.toLong()
@@ -28,7 +28,7 @@ object UserRepository : Repository<User>{
         transactionEnviroment {
             Users.selectAll()
                     .toList()
-                    .map{ User(it[Users.id].toLong(),it[Users.age],it[Users.gender].toGender(),it[Users.occupationId].toLong(),it[Users.zipCode].toString())}
+                    .map{ it.toUser() }
         }.asSequence()
 
 
@@ -53,7 +53,7 @@ object UserRepository : Repository<User>{
         transactionEnviroment {
             Users
                     .select {Users.id eq indexer.toInt()}
-                    .map { x -> User(x[Users.id].toLong(),x[Users.age],x[Users.gender].toGender(),x[Users.occupationId].toLong(),x[Users.zipCode].toString()) }
+                    .map { it.toUser() }
                     .first()
         }
 
