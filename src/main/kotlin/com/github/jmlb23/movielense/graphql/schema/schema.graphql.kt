@@ -132,7 +132,7 @@ val schema = KGraphQL.schema{
         }
     }
 
-    mutation("updateRate"){
+    mutation("updateOccupation"){
         resolver{occupationId: Long, name: String ->
             val rate = Occupation(0,name)
             OccupationRepository.replace(occupationId,rate)
