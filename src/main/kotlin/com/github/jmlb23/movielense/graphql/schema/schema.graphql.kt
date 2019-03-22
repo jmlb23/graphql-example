@@ -22,6 +22,10 @@ val schema = KGraphQL.schema{
         mlService::getUser.toResolver()
     }
 
+    query("getUserAndRatings"){
+        mlService::getUser.toResolver()
+    }
+
     mutation("createUser"){
         mlService::createUser.toResolver()
     }
@@ -36,35 +40,25 @@ val schema = KGraphQL.schema{
 
     //Rates
     query("allRates"){
-        resolver{
-            -> RatingRepository.getAll().toList()
-        }
+        mlService::getAllRates.toResolver()
     }
 
     query("getRate"){
-        resolver{ id: Int
-            -> RatingRepository.filter { Ratings.id eq id }.toList().first()
-        }
+        mlService::getRate.toResolver()
     }
 
     mutation("createRate"){
-        resolver{ userId: Long, movieId: Long, rating: Int ->
-            RatingRepository.add(Rating(userId,movieId,rating,DateTime.now().toDate()))
-        }
+        mlService::createRating.toResolver()
     }
 
     mutation("deleteRate"){
-        resolver{id: Int ->
-            RatingRepository.remove(id.toLong())
-        }
+        mlService::deleteRating.toResolver()
     }
 
     mutation("updateRate"){
-        resolver{ratingId: Int, userId: Long, movieId: Long, rating: Int ->
-            val rate = Rating(userId,movieId,rating,DateTime.now().toDate())
-            RatingRepository.replace(ratingId.toLong(),rate)
-        }
+        mlService::updateRating.toResolver()
     }
+
     //genres
     query("allGenres"){
         resolver{

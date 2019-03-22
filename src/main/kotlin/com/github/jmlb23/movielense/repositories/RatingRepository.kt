@@ -49,12 +49,12 @@ object RatingRepository : Repository<Rating>{
         }.toLong()
 
 
-    override fun getElement(indexer: Long): Rating =
+    override fun getElement(indexer: Long): Rating? =
         transactionEnviroment {
             Ratings
                     .select {Ratings.id eq indexer.toInt()}
                     .map{ it.toRating() }
-                    .first()
+                    .firstOrNull()
         }
 
 

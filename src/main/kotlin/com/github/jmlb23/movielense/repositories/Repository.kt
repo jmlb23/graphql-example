@@ -9,6 +9,6 @@ interface Repository<D>{
     fun getAll(): Sequence<D>
     fun remove(indexer: Long): Long
     fun replace(indexer: Long, element: D): Long
-    fun getElement(indexer: Long): D
+    fun getElement(indexer: Long): D?
     fun filter(predicate: SqlExpressionBuilder.() -> Op<Boolean>): Sequence<D>
 }
