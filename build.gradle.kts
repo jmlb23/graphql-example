@@ -16,7 +16,7 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
-    maven (url="https://dl.bintray.com/pgutkowski/Maven")
+    maven (url="https://jitpack.io")
 }
 
 dependencies {
@@ -25,7 +25,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed:0.11.2")
     implementation("org.http4k:http4k-core:3.102.0")
     implementation("org.postgresql:postgresql:42.2.2")
-    implementation("com.github.pgutkowski:kgraphql:0.3.0")
+    implementation("com.github.pabl0rg:kgraphql:e8dfd028478321325b7a323f46eab03f768c803a")
     implementation("org.http4k:http4k-server-jetty:3.102.0")
     // Use the Kotlin test library
     testImplementation("org.jetbrains.kotlin:kotlin-test")
