@@ -6,10 +6,10 @@ import com.github.jmlb23.movielense.domain.Occupation
 import org.jetbrains.exposed.sql.*
 
 object OccupationRepository : Repository<Occupation>{
-
+    private fun ResultRow.toOccupation() = Occupation(this[Occupations.id].toLong(),this[Occupations.name])
 
     override fun filter(predicate: SqlExpressionBuilder.() -> Op<Boolean>): Sequence<Occupation> = transactionEnviroment {
-        Occupations.select(predicate).map{ Occupation(it[Occupations.id].toLong(),it[Occupations.name])}
+        Occupations.select(predicate).map{ it.toOccupation() }
 
     }.asSequence()
 
@@ -24,7 +24,7 @@ object OccupationRepository : Repository<Occupation>{
         transactionEnviroment {
             Occupations.selectAll()
                     .toList()
-                    .map{ Occupation(it[Occupations.id].toLong(),it[Occupations.name])}
+                    .map{ it.toOccupation() }
         }.asSequence()
 
 
@@ -46,7 +46,7 @@ object OccupationRepository : Repository<Occupation>{
         transactionEnviroment {
             Occupations
                     .select {Occupations.id eq indexer.toInt()}
-                    .map { x -> Occupation(x[Occupations.id].toLong(),x[Occupations.name]) }
+                    .map { it.toOccupation() }
                     .first()
         }
 

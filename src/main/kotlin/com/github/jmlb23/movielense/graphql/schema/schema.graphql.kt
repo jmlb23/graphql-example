@@ -1,80 +1,64 @@
 package com.github.jmlb23.movielense.graphql.schema
 
+import com.github.jmlb23.movielense.MovieLensService
 import com.github.jmlb23.movielense.datasources.exposed.Genres
 import com.github.jmlb23.movielense.datasources.exposed.Occupations
 import com.github.jmlb23.movielense.datasources.exposed.Ratings
-import com.github.jmlb23.movielense.datasources.exposed.Users
 import com.github.jmlb23.movielense.domain.*
-import com.github.jmlb23.movielense.repositories.GenresRepository
-import com.github.jmlb23.movielense.repositories.OccupationRepository
-import com.github.jmlb23.movielense.repositories.RatingRepository
-import com.github.jmlb23.movielense.repositories.UserRepository
+import com.github.jmlb23.movielense.repositories.*
 import com.github.pgutkowski.kgraphql.KGraphQL
+import com.github.pgutkowski.kgraphql.schema.model.FunctionWrapper
 import org.joda.time.DateTime
+
+val mlService = MovieLensService(MovieRepository, GenresRepository, OccupationRepository, RatingRepository, UserRepository)
 
 val schema = KGraphQL.schema{
     //users
     query("allUsers"){
-        resolver{ ->
-                UserRepository.getAll().toList()
-        }
+        mlService::getAllUsers.toResolver()
     }
 
     query("getUser"){
-        resolver{ id: Int ->
-            UserRepository.filter{Users.id eq id }.toList().firstOrNull()
-        }
+        mlService::getUser.toResolver()
+    }
+
+    query("getUserAndRatings"){
+        mlService::getUser.toResolver()
     }
 
     mutation("createUser"){
-        resolver{ age: Int, gender: String, occupationId: Long, zipCode: String ->
-            UserRepository.add(User(0,age,gender.first().toGender(),occupationId,zipCode))
-        }
+        mlService::createUser.toResolver()
     }
 
     mutation("deleteUser"){
-        resolver{id: Long ->
-            UserRepository.remove(id)
-        }
+        mlService::deleteUser.toResolver()
     }
 
     mutation("updateUser"){
-        resolver{id: Long, age: Int, gender: String, occupationId: Long, zipCode: String ->
-            val user = User(id=0,age = age,gender = gender.first().toGender(),occupationId = occupationId, zipCode = zipCode)
-            UserRepository.replace(id, user)
-        }
+        mlService::updateUser.toResolver()
     }
+
     //Rates
     query("allRates"){
-        resolver{
-            -> RatingRepository.getAll().toList()
-        }
+        mlService::getAllRates.toResolver()
     }
 
     query("getRate"){
-        resolver{ id: Int
-            -> RatingRepository.filter { Ratings.id eq id }.toList().first()
-        }
+        mlService::getRate.toResolver()
     }
 
     mutation("createRate"){
-        resolver{ userId: Long, movieId: Long, rating: Int ->
-            RatingRepository.add(Rating(userId,movieId,rating,DateTime.now().toDate()))
-        }
+        mlService::createRating.toResolver()
     }
 
     mutation("deleteRate"){
-        resolver{id: Int ->
-            RatingRepository.remove(id.toLong())
-        }
+        mlService::deleteRating.toResolver()
     }
 
     mutation("updateRate"){
-        resolver{ratingId: Int, userId: Long, movieId: Long, rating: Int ->
-            val rate = Rating(userId,movieId,rating,DateTime.now().toDate())
-            RatingRepository.replace(ratingId.toLong(),rate)
-        }
+        mlService::updateRating.toResolver()
     }
+
     //genres
     query("allGenres"){
         resolver{
@@ -132,7 +116,7 @@ val schema = KGraphQL.schema{
         }
     }
 
-    mutation("updateRate"){
+    mutation("updateOccupation"){
         resolver{occupationId: Long, name: String ->
             val rate = Occupation(0,name)
             OccupationRepository.replace(occupationId,rate)

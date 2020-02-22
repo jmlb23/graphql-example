@@ -7,8 +7,10 @@ import org.jetbrains.exposed.sql.*
 import org.joda.time.DateTime
 
 object MovieRepository : Repository<Movie>{
+    private fun ResultRow.toMovie()  = Movie(this[Movies.id].toLong(),this[Movies.title],this[Movies.releaseDate].toDate())
+
     override fun filter(predicate: SqlExpressionBuilder.() -> Op<Boolean>): Sequence<Movie> = transactionEnviroment {
-        Movies.select(predicate).map{ Movie(it[Movies.id].toLong(),it[Movies.title],it[Movies.releaseDate].toDate())}
+        Movies.select(predicate).map{ it.toMovie() }
 
     }.asSequence()
 
@@ -24,7 +26,7 @@ object MovieRepository : Repository<Movie>{
             transactionEnviroment {
                 Movies.selectAll()
                         .toList()
-                        .map{ Movie(it[Movies.id].toLong(),it[Movies.title],it[Movies.releaseDate].toDate())}
+                        .map{ it.toMovie() }
             }.asSequence()
 
 
@@ -47,7 +49,7 @@ object MovieRepository : Repository<Movie>{
             transactionEnviroment {
                 Movies
                         .select {Movies.id eq indexer.toInt()}
-                        .map{ Movie(it[Movies.id].toLong(),it[Movies.title],it[Movies.releaseDate].toDate())}
+                        .map{ it.toMovie() }
                         .first()
             }
 }

@@ -6,9 +6,10 @@ import com.github.jmlb23.movielense.domain.Genre
 import org.jetbrains.exposed.sql.*
 
 object GenresRepository : Repository<Genre>{
+    private fun ResultRow.toGenre() = Genre(this[Genres.id],this[Genres.name])
 
     override fun filter(predicate: SqlExpressionBuilder.() -> Op<Boolean>): Sequence<Genre> = transactionEnviroment {
-        Genres.select(predicate).map{ Genre(it[Genres.id],it[Genres.name]) }
+        Genres.select(predicate).map{ it.toGenre() }
 
     }.asSequence()
 
@@ -22,7 +23,7 @@ object GenresRepository : Repository<Genre>{
     override fun getAll(): Sequence<Genre> = transactionEnviroment {
         Genres.selectAll()
                 .toList()
-                .map{ Genre(it[Genres.id],it[Genres.name])}
+                .map{ it.toGenre() }
     }.asSequence()
 
     override fun remove(indexer: Long): Long =
@@ -33,7 +34,7 @@ object GenresRepository : Repository<Genre>{
     override fun getElement(indexer: Long): Genre = transactionEnviroment {
         Genres
                 .select {Genres.id eq indexer.toInt()}
-                .map { x -> Genre(x[Genres.id],x[Genres.name]) }
+                .map { it.toGenre() }
                 .first()
     }
 

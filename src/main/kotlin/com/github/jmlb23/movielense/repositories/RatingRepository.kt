@@ -7,9 +7,10 @@ import org.jetbrains.exposed.sql.*
 import org.joda.time.DateTime
 
 object RatingRepository : Repository<Rating>{
+    private fun ResultRow.toRating() = Rating(this[Ratings.id].toLong(),this[Ratings.userId].toLong(),this[Ratings.movieId].toLong(),this[Ratings.rating],this[Ratings.ratedAt].toDate())
 
     override fun filter(predicate: SqlExpressionBuilder.() -> Op<Boolean>): Sequence<Rating> = transactionEnviroment {
-        Ratings.select(predicate).map{ Rating(it[Ratings.id].toLong(),it[Ratings.userId].toLong(),it[Ratings.movieId].toLong(),it[Ratings.rating],it[Ratings.ratedAt].toDate())}
+        Ratings.select(predicate).map{ it.toRating() }
 
     }.asSequence()
 
@@ -27,7 +28,7 @@ object RatingRepository : Repository<Rating>{
         transactionEnviroment {
             Ratings.selectAll()
                     .toList()
-                    .map{ Rating(it[Ratings.id].toLong(),it[Ratings.userId].toLong(),it[Ratings.movieId].toLong(),it[Ratings.rating],it[Ratings.ratedAt].toDate())}
+                    .map{ it.toRating() }
         }.asSequence()
 
 
@@ -48,12 +49,12 @@ object RatingRepository : Repository<Rating>{
         }.toLong()
 
 
-    override fun getElement(indexer: Long): Rating =
+    override fun getElement(indexer: Long): Rating? =
         transactionEnviroment {
             Ratings
                     .select {Ratings.id eq indexer.toInt()}
-                    .map{ Rating(it[Ratings.id].toLong(),it[Ratings.userId].toLong(),it[Ratings.movieId].toLong(),it[Ratings.rating],it[Ratings.ratedAt].toDate())}
-                    .first()
+                    .map{ it.toRating() }
+                    .firstOrNull()
         }
 
 
